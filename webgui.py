@@ -43,7 +43,6 @@ def get_data(interval):
         curs.execute("SELECT * FROM windlog")
     else:
         curs.execute("SELECT * FROM windlog WHERE date>datetime('now','-%s hours')" % interval)
-#        curs.execute("SELECT * FROM windlog WHERE date>datetime('2013-09-19 21:30:02','-%s hours') AND date<=datetime('2015-09-19 21:31:02')" % interval)
 
     rows=curs.fetchall()
 
@@ -79,11 +78,11 @@ def print_graph_script(table):
       google.setOnLoadCallback(drawChart);
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
-          ['Time', 'Temperature'],
+          ['Time', 'Wind Speed'],
 %s
         ]);
         var options = {
-          title: 'Temperature'
+          title: 'Wind-Speed'
         };
         var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
         chart.draw(data, options);
@@ -98,7 +97,7 @@ def print_graph_script(table):
 # print the div that contains the graph
 def show_graph():
     print "<h2>Wind Chart</h2>"
-    print '<div id="chart_div" style="width: 900px; height: 500px;"></div>'
+    print '<div id="chart_div" style="width: 1500px; height: 500px;"></div>'
 
 
 
@@ -113,40 +112,36 @@ def show_stats(option):
         option = str(24)
 
     curs.execute("SELECT date,max(mph) FROM windlog WHERE date>datetime('now','-%s hour') AND date<=datetime('now')" % option)
-#    curs.execute("SELECT date,max(mph) FROM windlog WHERE date>datetime('2013-09-19 21:30:02','-%s hour') AND date<=datetime('2015-09-19 21:31:02')" % option)
     rowmax=curs.fetchone()
-    rowstrmax="{0}&nbsp&nbsp&nbsp{1}C".format(str(rowmax[0]),str(rowmax[1]))
+    rowstrmax="{0}&nbsp&nbsp&nbsp{1} MPH".format(str(rowmax[0]),str(rowmax[1]))
 
-    curs.execute("SELECT date,min(mph) FROM windlog WHERE date>datetime('now','-%s hour') AND date<=datetime('now')" % option)
-#    curs.execute("SELECT date,min(mph) FROM windlog WHERE date>datetime('2013-09-19 21:30:02','-%s hour') AND date<=datetime('2015-09-19 21:31:02')" % option)
-    rowmin=curs.fetchone()
-    rowstrmin="{0}&nbsp&nbsp&nbsp{1}C".format(str(rowmin[0]),str(rowmin[1]))
+#    curs.execute("SELECT date,min(mph) FROM windlog WHERE date>datetime('now','-%s hour') AND date<=datetime('now')" % option)
+#    rowmin=curs.fetchone()
+#    rowstrmin="{0}&nbsp&nbsp&nbsp{1}MPH".format(str(rowmin[0]),str(rowmin[1]))
 
     curs.execute("SELECT avg(mph) FROM windlog WHERE date>datetime('now','-%s hour') AND date<=datetime('now')" % option)
-#    curs.execute("SELECT avg(mph) FROM windlog WHERE date>datetime('2013-09-19 21:30:02','-%s hour') AND date<=datetime('2015-09-19 21:31:02')" % option)
     rowavg=curs.fetchone()
 
 
     print "<hr>"
 
 
-    print "<h2>Minumum Temperature&nbsp</h2>"
-    print rowstrmin
-    print "<h2>Maximum Temperature</h2>"
+#    print "<h2>Minumum Wind-Speed&nbsp</h2>"
+#    print rowstrmin
+    print "<h2>Maximum Wind-Speed</h2>"
     print rowstrmax
-    print "<h2>Average Temperature</h2>"
-#    print "%.2f" % rowavg+"C"
+    print "<h2>Average Wind-Speed</h2>"
+    print "%.3f" % rowavg+" MPH"
 
     print "<hr>"
 
-    print "<h2>In the last hour:</h2>"
+    print "<h2>In the last min:</h2>"
     print "<table>"
-    print "<tr><td><strong>Date/Time</strong></td><td><strong>Temperature</strong></td></tr>"
+    print "<tr><td><strong>Date/Time</strong></td><td><strong>Wind-Speed</strong></td></tr>"
 
-    rows=curs.execute("SELECT * FROM windlog WHERE date>datetime('new','-1 hour') AND date<=datetime('new')")
-#    rows=curs.execute("SELECT * FROM windlog WHERE date>datetime('2013-09-19 21:30:02','-1 hour') AND date<=datetime('2015-09-19 21:31:02')")
+    rows=curs.execute("SELECT * FROM windlog WHERE date>datetime('now','-20 second') AND date<=datetime('now')")
     for row in rows:
-        rowstr="<tr><td>{0}&emsp;&emsp;</td><td>{1}C</td></tr>".format(str(row[0]),str(row[1]))
+        rowstr="<tr><td>{0}&emsp;&emsp;</td><td>{1}"" MPH""</td></tr>".format(str(row[0]),str(row[1]))
         print rowstr
     print "</table>"
 
@@ -160,13 +155,14 @@ def show_stats(option):
 def print_time_selector(option):
 
     print """<form action="/cgi-bin/webgui.py" method="POST">
-        Show the Temperature logs for  
+        Show the Wind-Speed logs for  
         <select name="timeinterval">"""
 
 
     if option is not None:
 
-        if option == "6":
+        
+	if option == "6":
             print "<option value=\"6\" selected=\"selected\">the last 6 hours</option>"
         else:
             print "<option value=\"6\">the last 6 hours</option>"
@@ -181,9 +177,16 @@ def print_time_selector(option):
         else:
             print "<option value=\"24\">the last 24 hours</option>"
 
+	if option == "1":
+            print "<option value=\"1\" selected=\"selected\">the last 1 hours</option>"
+        else:
+            print "<option value=\"1\">the last 1 hours</option>"
+
+
     else:
         print """<option value="6">the last 6 hours</option>
             <option value="12">the last 12 hours</option>
+		<option value="1">the last 1 hours</option>
             <option value="24" selected="selected">the last 24 hours</option>"""
 
     print """        </select>
@@ -246,11 +249,11 @@ def main():
     print "<html>"
     # print the head section including the table
     # used by the javascript for the chart
-    printHTMLHead("Raspberry Pi Temperature Logger", table)
+    printHTMLHead("Raspberry Pi Wind-Speed Logger", table)
 
     # print the page body
     print "<body>"
-    print "<h1>Raspberry Pi Temperature Logger</h1>"
+    print "<h1>Raspberry Pi Wind-Speed Logger</h1>"
     print "<hr>"
     print_time_selector(option)
     show_graph()
