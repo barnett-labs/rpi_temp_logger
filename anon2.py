@@ -16,7 +16,7 @@ table_name = 'wind'  # name of the table to be created
 field_type = 'INTEGER'  # column data type
 
 # Connecting to the database file
-conn = sqlite3.connect(sqlite_file)
+conn = sqlite3.connect(sqlite_file, timeout=10)
 c = conn.cursor()
 
 #############################################################################################
@@ -28,16 +28,18 @@ def main():
 	try:
 		GPIO.add_event_detect(Wind_PIN, GPIO.RISING, callback=MOTION)
 		time.sleep(1)
-		timerec = time.ctime()
-		mph = (WindCount * 2.5)
-		text_file = open("mph.html", "w")
-		text_file.write("%s" % mph)
-		text_file.close()
-		c.execute('''INSERT INTO windlog(date, mph)
-                	VALUES(?,?)''', (timerec, mph))
+		timerec = ('now')
+
+		mph = str(WindCount * 2.5)
+		#text_file = open("mph.html", "w")
+		#text_file.write("%s" % mph)
+		#text_file.close()
+		c.execute("INSERT INTO windlog values(datetime('now'), (?))", (mph,))
 		conn.commit()
 		conn.close()
 		GPIO.cleanup()
+		#time.sleep(5)
+		
 
 	except KeyboardInterrupt:
 		print "Quit"

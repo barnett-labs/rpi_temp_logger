@@ -26,7 +26,7 @@ def printHTMLHead(title, table):
     print title
     print "    </title>"
     
-    print_graph_script(table)
+    
 
     print "</head>"
 
@@ -52,53 +52,14 @@ def get_data(interval):
 
 
 # convert rows from database into a javascript table
-def create_table(rows):
-    chart_table=""
-
-    for row in rows[:-1]:
-        rowstr="['{0}', {1}],\n".format(str(row[0]),str(row[1]))
-        chart_table+=rowstr
-
-    row=rows[-1]
-    rowstr="['{0}', {1}]\n".format(str(row[0]),str(row[1]))
-    chart_table+=rowstr
-
-    return chart_table
-
 
 # print the javascript to generate the chart
 # pass the table generated from the database info
-def print_graph_script(table):
-
-    # google chart snippet
-    chart_code="""
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Time', 'Wind Speed'],
-%s
-        ]);
-        var options = {
-          title: 'Wind-Speed'
-        };
-        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-      }
-    </script>"""
-
-    print chart_code % (table)
 
 
 
 
 # print the div that contains the graph
-def show_graph():
-    print "<h2>Wind Chart</h2>"
-    print '<div id="chart_div" style="width: 1500px; height: 500px;"></div>'
-
 
 
 # connect to the db and show some stats
@@ -154,7 +115,7 @@ def show_stats(option):
 
 def print_time_selector(option):
 
-    print """<form action="/cgi-bin/webgui.py" method="POST">
+    print """<form action="/cgi-bin/webgui3.py" method="POST">
         Show the Wind-Speed logs for  
         <select name="timeinterval">"""
 
@@ -173,15 +134,15 @@ def print_time_selector(option):
             print "<option value=\"6\">the last 6 hours</option>"
 
         if option == "6":
-            print "<option value=\"12\" selected=\"selected\">the last 12 hours</option>"
+            print "<option value=\"8760\" selected=\"selected\">the last 8760 hours</option>"
         else:
-            print "<option value=\"12\">the last 12 hours</option>"
+            print "<option value=\"8760\">the last 8760 hours</option>"
 
 	
     else:
         print """<option value="1">the last 1 hours</option>
             <option value="6">the last 6 hours</option>
-		<option value="12" selected="selected">the last 12 hours</option>"""
+		<option value="8760" selected="selected">the last 8760 hours</option>"""
 
     print """        </select>
         <input type="submit" value="Display">
@@ -232,25 +193,20 @@ def main():
     # print the HTTP header
     printHTTPheader()
 
-    if len(records) != 0:
-        # convert the data into a table
-        table=create_table(records)
-    else:
-        print "No data found"
-        return
+    
 
     # start printing the page
     print "<html>"
     # print the head section including the table
     # used by the javascript for the chart
-    printHTMLHead("Raspberry Pi Wind-Speed Logger", table)
+   
 
     # print the page body
     print "<body>"
     print "<h1>Raspberry Pi Wind-Speed Logger</h1>"
     print "<hr>"
     print_time_selector(option)
-    show_graph()
+    
     show_stats(option)
     print "</body>"
     print "</html>"
