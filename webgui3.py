@@ -72,15 +72,15 @@ def show_stats(option):
     if option is None:
         option = str(6)
 
-    curs.execute("SELECT date,max(mph) FROM windlog WHERE date>datetime('now','-%s hour') AND date<=datetime('now')" % option)
+    curs.execute("SELECT date,max(mph) FROM windlog WHERE date>datetime('now','-%s day') AND date<=datetime('now')" % option)
     rowmax=curs.fetchone()
     rowstrmax="{0}&nbsp&nbsp&nbsp{1} MPH".format(str(rowmax[0]),str(rowmax[1]))
 
-#    curs.execute("SELECT date,min(mph) FROM windlog WHERE date>datetime('now','-%s hour') AND date<=datetime('now')" % option)
+#    curs.execute("SELECT date,min(mph) FROM windlog WHERE date>datetime('now','-%s day') AND date<=datetime('now')" % option)
 #    rowmin=curs.fetchone()
 #    rowstrmin="{0}&nbsp&nbsp&nbsp{1}MPH".format(str(rowmin[0]),str(rowmin[1]))
 
-    curs.execute("SELECT avg(mph) FROM windlog WHERE date>datetime('now','-%s hour') AND date<=datetime('now')" % option)
+    curs.execute("SELECT avg(mph) FROM windlog WHERE date>datetime('now','-%s day') AND date<=datetime('now')" % option)
     rowavg=curs.fetchone()
 
 
@@ -133,16 +133,16 @@ def print_time_selector(option):
         else:
             print "<option value=\"6\">the last 6 hours</option>"
 
-        if option == "6":
-            print "<option value=\"8760\" selected=\"selected\">the last 8760 hours</option>"
+        if option == "365":
+            print "<option value=\"365\" selected=\"selected\">the last 8760 hours</option>"
         else:
-            print "<option value=\"8760\">the last 8760 hours</option>"
+            print "<option value=\"365\">the last 365 hours</option>"
 
 	
     else:
         print """<option value="1">the last 1 hours</option>
-            <option value="6">the last 6 hours</option>
-		<option value="8760" selected="selected">the last 8760 hours</option>"""
+            <option value="365">the last 365 hours</option>
+		<option value="365" selected="selected">the last 365 hours</option>"""
 
     print """        </select>
         <input type="submit" value="Display">

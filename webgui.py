@@ -42,7 +42,7 @@ def get_data(interval):
     if interval == None:
         curs.execute("SELECT * FROM windlog")
     else:
-        curs.execute("SELECT * FROM windlog WHERE date>datetime('now','-%s hours')" % interval)
+        curs.execute("SELECT * FROM windlog WHERE date>datetime('now','-%s day')" % interval)
 
     rows=curs.fetchall()
 
@@ -111,15 +111,15 @@ def show_stats(option):
     if option is None:
         option = str(6)
 
-    curs.execute("SELECT date,max(mph) FROM windlog WHERE date>datetime('now','-%s hour') AND date<=datetime('now')" % option)
+    curs.execute("SELECT date,max(mph) FROM windlog WHERE date>datetime('now','-%s day') AND date<=datetime('now')" % option)
     rowmax=curs.fetchone()
     rowstrmax="{0}&nbsp&nbsp&nbsp{1} MPH".format(str(rowmax[0]),str(rowmax[1]))
 
-#    curs.execute("SELECT date,min(mph) FROM windlog WHERE date>datetime('now','-%s hour') AND date<=datetime('now')" % option)
+#    curs.execute("SELECT date,min(mph) FROM windlog WHERE date>datetime('now','-%s day') AND date<=datetime('now')" % option)
 #    rowmin=curs.fetchone()
 #    rowstrmin="{0}&nbsp&nbsp&nbsp{1}MPH".format(str(rowmin[0]),str(rowmin[1]))
 
-    curs.execute("SELECT avg(mph) FROM windlog WHERE date>datetime('now','-%s hour') AND date<=datetime('now')" % option)
+    curs.execute("SELECT avg(mph) FROM windlog WHERE date>datetime('now','-%s day') AND date<=datetime('now')" % option)
     rowavg=curs.fetchone()
 
 
@@ -162,7 +162,7 @@ def print_time_selector(option):
     if option is not None:
 
         
-	if option == "6":
+	if option == "1":
             print "<option value=\"1\" selected=\"selected\">the last 1 hours</option>"
         else:
             print "<option value=\"1\">the last 1 hours</option>"
@@ -177,11 +177,21 @@ def print_time_selector(option):
         else:
             print "<option value=\"12\">the last 12 hours</option>"
 
+
+        if option == "168":
+            print "<option value=\"168\" selected=\"selected\">the last 168 hours</option>"
+        else:
+            print "<option value=\"168\">the last 168 hours</option>"
+
+
 	
     else:
         print """<option value="1">the last 1 hours</option>
             <option value="6">the last 6 hours</option>
+		<option value="168">the last 168 hours</option>
 		<option value="12" selected="selected">the last 12 hours</option>"""
+
+
 
     print """        </select>
         <input type="submit" value="Display">
