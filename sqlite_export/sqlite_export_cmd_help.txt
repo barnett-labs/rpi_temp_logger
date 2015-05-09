@@ -1,0 +1,59 @@
+SQLiteExport
+
+SQLiteExport is a command line program to easily export data from an SQLite
+database. You can enter database, outputfile name and output type, and specify
+a table or a custom sql command.
+
+You can easily automate export tasks with SQLiteExport, as you can execute
+the program from within a batch file and have all freedom to specify custom
+sql commands.
+
+SQLiteExport is available for Linux and Windows.
+
+FEATURES
+
+Export from a SQLite database
+Export formats: tabs, csv, xls, html, screen
+Export a complete table or results from a custom sql command
+Exporting data is very fast
+
+USAGE
+
+sqlite_export_cmd -database DATABASE -output FILENAME -table TABLENAME [-mode MODE]
+sqlite_export_cmd -database DATABASE -output FILENAME -sql SQLCOMMAND  [-mode MODE]
+sqlite_export_cmd -help
+
+Available parameters:
+-database DATABASE      The name of the SQLite database.
+-output FILENAME        The filename of the output file.
+-table TABLENAME        Table name of the table to be exported.
+-sql SQLCOMMAND         A custom sql command
+-mode MODE              The output format, optional. If mode is not provided,
+                        the program guesses the right mode based on the 
+                        extension of the filename. For MODE, choose from:
+                          tabs    A tab separated file
+                          csv     A command separated file
+                          xls     An Excel file
+                          html    A html file
+                          screen  Show results on screen
+-help                   If parameter -help is provided, information about 
+                        the usage is printed.
+
+You have to choose one of the two parameters -table or -sql. 
+If one of the parameter values contains spaces, enclose the parameter value 
+with double quotes.
+
+EXAMPLE USAGE
+
+sqlite_export_cmd -database data.db -output myoutput.xls -table mytable
+sqlite_export_cmd -database data.db -output data.csv -sql "SELECT * FROM tbl;"
+sqlite_export_cmd -database data.db -mode html -output page.html -table address
+sqlite_export_cmd -database "other database.db" -mode screen -table addresses
+sqlite_export_cmd -help
+
+ABOUT
+
+Open source under the MIT license.
+Created with C++ and the Codeblocks IDE.
+Created by Jos de Jong, 2010
+
